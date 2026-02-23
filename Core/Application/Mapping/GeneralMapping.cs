@@ -11,27 +11,34 @@ namespace Application.Mapping
     {
         public GeneralMapping()
         {
-            // WorkoutProgram Eşleşmeleri
-            CreateMap<WorkoutProgram, WorkoutResultDto>().ReverseMap();
+           
+            CreateMap<WorkoutProgram, WorkoutProgramDto>().ReverseMap();
             CreateMap<WorkoutProgram, CreateWorkoutProgramDto>().ReverseMap();
-            CreateMap<WorkoutProgram, UpdateWorkoutProgramDto>().ReverseMap();
+            CreateMap<WorkoutProgram, UpdateWorkoutProgramDto>().ReverseMap()
+                .ForMember(dest => dest.ProgramExercises, opt => opt.Ignore());
 
-            // ProgramExercise Eşleşmeleri
+            
             CreateMap<ProgramExercise, ProgramExerciseDto>()
                 // ExerciseName gibi DTO'da olup da Entity'de bir alt objede (Exercise tablosunda) 
-                // bulunan verileri böyle otomatik eşleyebiliriz (İleri seviyedir, şimdilik dursun).
                 .ForMember(dest => dest.ExerciseName, opt => opt.MapFrom(src => src.Exercise != null ? src.Exercise.ExerciseName : null))
                 .ReverseMap();
             CreateMap<ProgramExercise, CreateProgramExerciseDto>().ReverseMap();
             CreateMap<ProgramExercise, UpdateProgramExerciseDto>().ReverseMap();
 
-            // Exercise Eşleşmeleri
+       
             CreateMap<Exercise, ExerciseDto>().ReverseMap();
             CreateMap<Exercise, CreateExerciseDto>().ReverseMap();
 
-            // WorkoutLog Eşleşmeleri
+         
             CreateMap<WorkoutLog, WorkoutLogDto>().ReverseMap();
             CreateMap<WorkoutLog, CreateWorkoutLogDto>().ReverseMap();
+
+            // Community & Post Mappings
+            CreateMap<Domain.Entities.Community.Post, Application.DTO.Community.Post.CreatePostDto>().ReverseMap();
+            
+            CreateMap<Domain.Entities.Community.Post, Application.DTO.Community.Post.ResultPostDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.Name : null))
+                .ForMember(dest => dest.MediaUrls, opt => opt.MapFrom(src => src.Media.Select(m => m.Url).ToList()));
         }
     }
 }

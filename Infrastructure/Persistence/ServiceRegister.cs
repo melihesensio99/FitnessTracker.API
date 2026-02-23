@@ -1,4 +1,4 @@
-﻿using Application.Interfaces.UnitOfWorks;
+﻿using Application.Abstraction.UnitOfWorks;
 using Application.Repositories;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -7,7 +7,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Context.AppDbContext;
 using Persistence.Repositories;
+using Persistence.Repositories.EntitiesRepository;
 using Persistence.UnitOfWorks;
+using Application.Repositories.EntitiesRepository;
+using Application.Repositories.CommunityRepository;
+using Persistence.Repositories.CommunityRepository;
 
 namespace Persistence
 {
@@ -30,7 +34,11 @@ namespace Persistence
 
           
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IExerciseRepository, ExerciseRepository>();
+            services.AddScoped<IWorkoutProgramRepository, WorkoutProgramRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IPostRepository, PostRepository>();
+
         }
     }
 }

@@ -1,4 +1,0 @@
-Build started...
-Build succeeded.
-An error occurred while accessing the Microsoft.Extensions.Hosting services. Continuing without the application service provider. Error: Failed to load configuration from file 'C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\appsettings.json'.
-Unable to create a 'DbContext' of type 'FitnessTrackerDbContext'. The exception 'Unable to resolve service for type 'Microsoft.EntityFrameworkCore.DbContextOptions`1[Persistence.Context.AppDbContext.FitnessTrackerDbContext]' while attempting to activate 'Persistence.Context.AppDbContext.FitnessTrackerDbContext'.' was thrown while attempting to create an instance. For the different patterns supported at design time, see https://go.microsoft.com/fwlink/?linkid=851728

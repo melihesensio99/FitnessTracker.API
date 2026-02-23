@@ -5,7 +5,7 @@ namespace Application.Repositories
 {
     public interface IGenericRepository<T> where T : class
     {
-        IQueryable<T> GetAll();
+        IQueryable<T> GetAll(bool tracking = true);
         Task<T?> GetByIdAsync(int id);
         
         Task AddAsync(T model);

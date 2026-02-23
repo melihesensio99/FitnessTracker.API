@@ -17,9 +17,13 @@ namespace Persistence.Repositories
 
         public DbSet<T> Table => _context.Set<T>();
 
-        public IQueryable<T> GetAll()
+        public IQueryable<T> GetAll(bool tracking = true)
         {
-            return Table; 
+            var query = Table.AsQueryable();
+            if (!tracking)
+                query = query.AsNoTracking();
+                
+            return query; 
         }
 
         public async Task<T?> GetByIdAsync(int id)

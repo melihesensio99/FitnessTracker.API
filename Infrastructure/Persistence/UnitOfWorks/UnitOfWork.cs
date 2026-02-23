@@ -1,4 +1,4 @@
-using Application.Interfaces.UnitOfWorks;
+using Application.Abstraction.UnitOfWorks;
 using Persistence.Context.AppDbContext;
 using System;
 using System.Threading.Tasks;

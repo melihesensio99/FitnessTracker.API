@@ -6,11 +6,12 @@ namespace Application.DTO.WorkoutProgram
     {
         public int Id { get; set; } 
         public string Title { get; set; }
-        public int Level { get; set; }
+        public string Level { get; set; }
         public string Description { get; set; }
+        public string? ImageUrl { get; set; }
         public bool IsPublic { get; set; }
-        
-        public List<UpdateProgramExerciseDto> Exercises { get; set; } = new List<UpdateProgramExerciseDto>();   
+        public string Ambition { get; set; }
+        public List<UpdateProgramExerciseDto> ProgramExercises { get; set; } = new List<UpdateProgramExerciseDto>();   
 
     }
 }

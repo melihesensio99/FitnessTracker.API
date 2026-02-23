@@ -1,7 +1,7 @@
 ﻿using Application.DTO.Exercise;
 using Application.Exceptions;
-using Application.Interfaces.Services;
-using Application.Interfaces.UnitOfWorks;
+using Application.Abstraction.Services;
+using Application.Abstraction.UnitOfWorks;
 using Application.Repositories.EntitiesRepository;
 using AutoMapper;
 using Domain.Entities;
