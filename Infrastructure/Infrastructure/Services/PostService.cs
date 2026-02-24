@@ -20,17 +20,20 @@ namespace Infrastructure.Services
     public class PostService : IPostService
     {
         private readonly IPostRepository _postRepository;
+        private readonly IPostLikeRepository _postLikeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStorageService _storageService;
         private readonly IMapper _mapper;
 
         public PostService(
             IPostRepository postRepository,
+            IPostLikeRepository postLikeRepository,
             IUnitOfWork unitOfWork,
             IStorageService storageService,
             IMapper mapper)
         {
             _postRepository = postRepository;
+            _postLikeRepository = postLikeRepository;
             _unitOfWork = unitOfWork;
             _storageService = storageService;
             _mapper = mapper;
@@ -78,7 +81,7 @@ namespace Infrastructure.Services
             return MediaType.Image;
         }
 
-        public async Task<PagedResponse<ResultPostDto>> GetPostsAsync(PagedRequest request, int? filterUserId = null)
+        public async Task<PagedResponse<ResultPostDto>> GetPostsAsync(PagedRequest request, int currentUserId, int? filterUserId = null)
         {
             PagedResponse<Post> postsResult;
 
@@ -91,7 +94,7 @@ namespace Infrastructure.Services
                 postsResult = await _postRepository.GetPosts(request, false);
             }
 
-            return MapPagedResponse(postsResult);
+            return await MapPagedResponseAsync(postsResult, currentUserId);
         }
 
         public async Task DeletePostAsync(int postId, int userId)
@@ -113,22 +116,22 @@ namespace Infrastructure.Services
             await _unitOfWork.SaveAsync();
         }
 
-        public async Task<PagedResponse<ResultPostDto>> GetTrendingPostsAsync(PagedRequest request, int days = 7)
+        public async Task<PagedResponse<ResultPostDto>> GetTrendingPostsAsync(PagedRequest request, int currentUserId, int days = 7)
         {
             var pagedEntities = await _postRepository.GetTrendingPostsAsync(request, days, tracking: false);
-            return MapPagedResponse(pagedEntities);
+            return await MapPagedResponseAsync(pagedEntities, currentUserId);
         }
 
-        public async Task<PagedResponse<ResultPostDto>> GetLikedPostsByUserIdAsync(int userId, PagedRequest request)
+        public async Task<PagedResponse<ResultPostDto>> GetLikedPostsByUserIdAsync(int userId, int currentUserId, PagedRequest request)
         {
             var pagedEntities = await _postRepository.GetLikedPostsByUserIdAsync(userId, request, tracking: false);
-            return MapPagedResponse(pagedEntities);
+            return await MapPagedResponseAsync(pagedEntities, currentUserId);
         }
 
-        public async Task<PagedResponse<ResultPostDto>> SearchPostsAsync(string keyword, PagedRequest request)
+        public async Task<PagedResponse<ResultPostDto>> SearchPostsAsync(string keyword, PagedRequest request, int currentUserId)
         {
             var pagedEntities = await _postRepository.SearchPostsAsync(keyword, request, tracking: false);
-            return MapPagedResponse(pagedEntities);
+            return await MapPagedResponseAsync(pagedEntities, currentUserId);
         }
 
         public async Task UpdatePostVisibilityAsync(int postId, int userId, VisibilityType visibility)
@@ -144,16 +147,101 @@ namespace Infrastructure.Services
             await _unitOfWork.SaveAsync();
         }
 
-        private PagedResponse<ResultPostDto> MapPagedResponse(PagedResponse<Post> source)
+        private async Task<PagedResponse<ResultPostDto>> MapPagedResponseAsync(PagedResponse<Post> source, int currentUserId)
         {
+            var dtos = _mapper.Map<List<ResultPostDto>>(source.Data);
+
+            if (dtos.Any())
+            {
+                var postIds = dtos.Select(p => p.Id).ToList();
+                var likedPostIds = await _postLikeRepository.GetLikedPostIdsByUserAsync(postIds, currentUserId);
+                var likedPostIdSet = new HashSet<int>(likedPostIds);
+                foreach (var dto in dtos)
+                {
+                    dto.IsLikedByCurrentUser = likedPostIdSet.Contains(dto.Id);
+                }
+            }
+
             return new PagedResponse<ResultPostDto>
             {
-                Data = _mapper.Map<List<ResultPostDto>>(source.Data),
+                Data = dtos,
                 TotalCount = source.TotalCount,
                 CurrentPage = source.CurrentPage,
                 PageSize = source.PageSize,
                 TotalPages = source.TotalPages
             };
+        }
+
+        public async Task<bool> ToggleLikeAsync(int postId, int userId)
+        {
+            var post = await _postRepository.GetByIdAsync(postId);
+            if (post == null) throw new NotFoundException(nameof(Post), postId);
+
+            var existingLike = await _postLikeRepository.GetPostLikeAsync(postId, userId);
+
+            bool isLikedNow = false;
+            if (existingLike != null)
+            {
+                _postLikeRepository.Remove(existingLike);
+                post.LikeCount = Math.Max(0, post.LikeCount - 1);
+                isLikedNow = false;
+            }
+            else
+            {
+                var like = new PostLike { PostId = postId, UserId = userId, CreatedAt = DateTime.UtcNow };
+                await _postLikeRepository.AddAsync(like);
+                post.LikeCount++;
+                isLikedNow = true;
+            }
+
+            _postRepository.Update(post);
+            await _unitOfWork.SaveAsync();
+
+            return isLikedNow;
+        }
+
+        public async Task UpdatePostAsync(UpdatePostDto request, int userId)
+        {
+            var post = await _postRepository.GetPostByIdWithDetailsAsync(request.Id, tracking: true);
+            if (post == null) throw new NotFoundException(nameof(Post), request.Id);
+
+            if (post.UserId != userId) throw new UnauthorizedAccessException("Bu postu düzenleme yetkiniz yok.");
+
+            post.Content = request.Content;
+            post.Visibility = request.Visibility;
+            post.UpdatedAt = DateTime.UtcNow;
+
+            if (request.MediaFiles != null && request.MediaFiles.Any())
+            {
+                if (post.Media != null && post.Media.Any())
+                {
+                    foreach (var oldMedia in post.Media.ToList())
+                    {
+                        await _storageService.DeleteAsync(oldMedia.Url);
+                        post.Media.Remove(oldMedia);
+                    }
+                }
+                if (post.Media == null) post.Media = new List<PostMedia>();
+
+                foreach (var file in request.MediaFiles)
+                {
+                    if (file.Length > 0)
+                    {
+                        using var stream = file.OpenReadStream();
+                        string ext = Path.GetExtension(file.FileName);
+                        string fileName = $"{Guid.NewGuid()}{ext}";
+                        string fileUrl = await _storageService.UploadAsync(stream, fileName, file.ContentType);
+                        post.Media.Add(new PostMedia
+                        {
+                            Url = fileUrl,
+                            Type = DetermineMediaType(file.ContentType)
+                        });
+                    }
+                }
+            }
+
+            _postRepository.Update(post);
+            await _unitOfWork.SaveAsync();
         }
     }
 }

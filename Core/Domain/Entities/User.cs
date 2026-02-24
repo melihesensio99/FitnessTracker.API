@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Domain.Entities.Community;
 using Microsoft.AspNetCore.Identity;
+using System;
+using System.Collections.Generic;
 
 namespace Domain.Entities
 {
@@ -9,5 +10,6 @@ namespace Domain.Entities
         public string Name { get; set; }
         public ICollection<WorkoutProgram> WorkoutPrograms { get; set; } = new List<WorkoutProgram>();
         public ICollection<WorkoutLog> WorkoutLogs { get; set; } = new List<WorkoutLog>();
+        
     }
 }

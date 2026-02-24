@@ -1,13 +1,12 @@
 ﻿using Domain.Entities.Community;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace Application.Repositories.CommunityRepository
 {
     public interface IPostLikeRepository : IGenericRepository<PostLike>
     {
-        Task<PostLike?> GetAsync(int postId, int userId);
-        Task<int> CountAsync(int postId);
+        Task<PostLike?> GetPostLikeAsync(int postId, int userId);
+        Task<List<int>> GetLikedPostIdsByUserAsync(IEnumerable<int> postIds, int userId);
     }
 }

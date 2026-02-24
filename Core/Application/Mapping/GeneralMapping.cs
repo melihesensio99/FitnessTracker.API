@@ -35,6 +35,7 @@ namespace Application.Mapping
 
             // Community & Post Mappings
             CreateMap<Domain.Entities.Community.Post, Application.DTO.Community.Post.CreatePostDto>().ReverseMap();
+            CreateMap<Domain.Entities.Community.Post, Application.DTO.Community.Post.UpdatePostDto>().ReverseMap();
             
             CreateMap<Domain.Entities.Community.Post, Application.DTO.Community.Post.ResultPostDto>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.Name : null))

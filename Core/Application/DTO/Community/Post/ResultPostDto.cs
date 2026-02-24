@@ -13,6 +13,7 @@ namespace Application.DTO.Community.Post
         public DateTime CreatedAt { get; set; }
         public int LikeCount { get; set; }
         public int CommentCount { get; set; }
+        public bool IsLikedByCurrentUser { get; set; }
         public List<string> MediaUrls { get; set; }
     }
 }

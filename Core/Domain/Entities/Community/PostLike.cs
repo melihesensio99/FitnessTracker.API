@@ -6,8 +6,6 @@ namespace Domain.Entities.Community
 {
     public class PostLike //todo unique ayari!
     {
-        public int Id { get; set; }
-
         public int PostId { get; set; }
         public Post Post { get; set; }
 
