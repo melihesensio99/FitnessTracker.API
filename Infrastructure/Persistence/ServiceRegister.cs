@@ -39,6 +39,8 @@ namespace Persistence
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<IPostLikeRepository, PostLikeRepository>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
+            services.AddScoped<ICommentLikeRepository, CommentLikeRepository>();
 
         }
     }

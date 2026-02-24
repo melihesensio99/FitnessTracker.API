@@ -40,6 +40,11 @@ namespace Application.Mapping
             CreateMap<Domain.Entities.Community.Post, Application.DTO.Community.Post.ResultPostDto>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.Name : null))
                 .ForMember(dest => dest.MediaUrls, opt => opt.MapFrom(src => src.Media.Select(m => m.Url).ToList()));
+
+            // Comment Mappings
+            CreateMap<Domain.Entities.Community.Comment, Application.DTO.Community.Comment.CreateCommentDto>().ReverseMap();
+            CreateMap<Domain.Entities.Community.Comment, Application.DTO.Community.Comment.ResultCommentDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.Name : null));
         }
     }
 }

@@ -1,0 +1,43 @@
+﻿commit d024c5aa81bf084f8ab10615e2e18ea2e4afef08
+Author: melo <melih@DESKTOP-MRA5AHM>
+Date:   Tue Feb 24 00:28:13 2026 +0300
+
+     feat: Backend Architecture Refactor - AWS S3, PagedResponse, ApiResponse ve Validation yapilari kuruldu.
+
+diff --git a/WebApi/appsettings.json b/WebApi/appsettings.json
+index 1810167..bf83775 100644
+--- a/WebApi/appsettings.json
++++ b/WebApi/appsettings.json
+@@ -8,5 +8,6 @@
+   "ConnectionStrings": {
+     "PostgreSQLConnection": "Host=localhost;Port=5432;Database=fitnesstracker;Username=postgres;Password=123456"
+   },
+-  "AllowedHosts": "*"
++  "AllowedHosts": "*",
++ 
+ }
+
+commit 3f0413884e1e35c1e8c52b8e09a6dce464732186
+Author: melo <melih@DESKTOP-MRA5AHM>
+Date:   Sat Feb 21 22:50:44 2026 +0300
+
+    Add project files.
+
+diff --git a/WebApi/appsettings.json b/WebApi/appsettings.json
+new file mode 100644
+index 0000000..1810167
+--- /dev/null
++++ b/WebApi/appsettings.json
+@@ -0,0 +1,12 @@
++{
++  "Logging": {
++    "LogLevel": {
++      "Default": "Information",
++      "Microsoft.AspNetCore": "Warning"
++    }
++  },
++  "ConnectionStrings": {
++    "PostgreSQLConnection": "Host=localhost;Port=5432;Database=fitnesstracker;Username=postgres;Password=123456"
++  },
++  "AllowedHosts": "*"
++}

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence.Context.AppDbContext;
@@ -11,9 +12,11 @@ using Persistence.Context.AppDbContext;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(FitnessTrackerDbContext))]
-    partial class FitnessTrackerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260224130701_mig999")]
+    partial class mig999
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,16 +40,10 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("LikeCount")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ParentCommentId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("PostId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ReplyCount")
+                    b.Property<int>("PostId1")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -57,34 +54,13 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentCommentId");
-
                     b.HasIndex("PostId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Community.CommentLike", b =>
-                {
-                    b.Property<int>("CommentId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("CommentId", "UserId");
+                    b.HasIndex("PostId1");
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("CommentId", "UserId")
-                        .IsUnique();
-
-                    b.ToTable("CommentLikes");
+                    b.ToTable("comments");
                 });
 
             modelBuilder.Entity("Domain.Entities.Community.Post", b =>
@@ -524,45 +500,25 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.Community.Comment", b =>
                 {
-                    b.HasOne("Domain.Entities.Community.Comment", "ParentComment")
-                        .WithMany("Replies")
-                        .HasForeignKey("ParentCommentId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Community.Post", "Post")
+                    b.HasOne("Domain.Entities.Community.Post", null)
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.User", "User")
+                    b.HasOne("Domain.Entities.Community.Post", "Post")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ParentComment");
-
-                    b.Navigation("Post");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Community.CommentLike", b =>
-                {
-                    b.HasOne("Domain.Entities.Community.Comment", "Comment")
-                        .WithMany("Likes")
-                        .HasForeignKey("CommentId")
+                        .HasForeignKey("PostId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Comment");
+                    b.Navigation("Post");
 
                     b.Navigation("User");
                 });
@@ -704,13 +660,6 @@ namespace Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Entities.Community.Comment", b =>
-                {
-                    b.Navigation("Likes");
-
-                    b.Navigation("Replies");
                 });
 
             modelBuilder.Entity("Domain.Entities.Community.Post", b =>
