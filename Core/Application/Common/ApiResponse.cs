@@ -19,7 +19,7 @@ namespace Application.Common
             };
         }
 
-        public static ApiResponse<T> SuccessMessage(string message)
+        public static ApiResponse<T> SuccessMessages(string message)
         {
             return new ApiResponse<T>
             {

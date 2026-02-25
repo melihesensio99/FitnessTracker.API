@@ -1,6 +1,7 @@
 using Application.Abstraction.Storage;
 using Application.Common;
 using Application.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MediaController : ControllerBase
     {
         private readonly IStorageService _storageService;
@@ -51,7 +53,7 @@ namespace WebApi.Controllers
                 return StatusCode(500, ApiResponse<object>.ErrorResponse("Dosya silinirken bir hata oluştu veya URL geçersiz."));
             }
 
-            return Ok(ApiResponse<object>.SuccessMessage("Medya başarıyla silindi."));
+            return Ok(ApiResponse<object>.SuccessMessages("Medya başarıyla silindi."));
         }
     }
 }

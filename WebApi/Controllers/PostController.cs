@@ -2,6 +2,7 @@ using Application.Abstraction.Services;
 using Application.Common;
 using Application.Common.Pagination;
 using Application.DTO.Community.Post;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -19,18 +20,20 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreatePost([FromForm] CreatePostDto createPostDto, [FromQuery] int userId)
         {
             await _postService.CreatePostAsync(createPostDto, userId);
-            return Ok(ApiResponse<object>.SuccessMessage("Post başarıyla oluşturuldu."));
+            return Ok(ApiResponse<object>.SuccessMessages("Post başarıyla oluşturuldu."));
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdatePost(int id, [FromForm] UpdatePostDto updatePostDto, [FromQuery] int userId)
         {
             updatePostDto.Id = id;
             await _postService.UpdatePostAsync(updatePostDto, userId);
-            return Ok(ApiResponse<object>.SuccessMessage("Post başarıyla güncellendi."));
+            return Ok(ApiResponse<object>.SuccessMessages("Post başarıyla güncellendi."));
         }
 
         [HttpGet("feed")]
@@ -55,6 +58,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("liked/{userId}")]
+        [Authorize]
         public async Task<IActionResult> GetLikedPosts(int userId, [FromQuery] PagedRequest request, [FromQuery] int currentUserId)
         {
             var response = await _postService.GetLikedPostsByUserIdAsync(userId, currentUserId, request);
@@ -74,20 +78,23 @@ namespace WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeletePost(int id, [FromQuery] int userId)
         {
             await _postService.DeletePostAsync(id, userId);
-            return Ok(ApiResponse<object>.SuccessMessage("Post başarıyla silindi."));
+            return Ok(ApiResponse<object>.SuccessMessages("Post başarıyla silindi."));
         }
 
         [HttpPut("{id}/visibility")]
+        [Authorize]
         public async Task<IActionResult> UpdatePostVisibility(int id, [FromQuery] int userId, [FromQuery] Domain.Enums.VisibilityType visibility)
         {
             await _postService.UpdatePostVisibilityAsync(id, userId, visibility);
-            return Ok(ApiResponse<object>.SuccessMessage("Görünürlük başarıyla güncellendi."));
+            return Ok(ApiResponse<object>.SuccessMessages("Görünürlük başarıyla güncellendi."));
         }
 
         [HttpPost("{id}/toggle-like")]
+        [Authorize]
         public async Task<IActionResult> ToggleLike(int id, [FromQuery] int userId)
         {
             var isLiked = await _postService.ToggleLikeAsync(id, userId);

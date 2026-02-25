@@ -2,6 +2,7 @@ using Application.Abstraction.Services;
 using Application.Common;
 using Application.Common.Pagination;
 using Application.DTO.WorkoutProgram;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -27,6 +28,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("user/{userId}")]
+        [Authorize]
         public async Task<IActionResult> GetUserPrograms(int userId)
         {
             var programs = await _workoutProgramService.GetUserProgramsAsync(userId);
@@ -41,6 +43,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddWorkoutProgram([FromBody] CreateWorkoutProgramDto createDto)
         {
             var result = await _workoutProgramService.AddWorkoutProgramAsync(createDto);
@@ -49,20 +52,23 @@ namespace WebApi.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> UpdateWorkoutProgram([FromBody] UpdateWorkoutProgramDto updateDto)
         {
             await _workoutProgramService.UpdateWorkoutProgramAsync(updateDto);
-            return Ok(ApiResponse<object>.SuccessMessage("Program başarıyla güncellendi."));
+            return Ok(ApiResponse<object>.SuccessMessages("Program başarıyla güncellendi."));
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteWorkoutProgram(int id)
         {
             await _workoutProgramService.DeleteWorkoutProgramAsync(id);
-            return Ok(ApiResponse<object>.SuccessMessage("Program başarıyla silindi."));
+            return Ok(ApiResponse<object>.SuccessMessages("Program başarıyla silindi."));
         }
 
         [HttpPost("clone/{programId}")]
+        [Authorize]
         public async Task<IActionResult> CloneSystemProgramToUser(int programId, [FromQuery] int userId)
         {
             var newProgramId = await _workoutProgramService.CloneSystemProgramToUserAsync(programId, userId);
@@ -70,10 +76,11 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("activate")]
+        [Authorize]
         public async Task<IActionResult> ActivateProgram([FromQuery] int programId, [FromQuery] int userId)
         {
             await _workoutProgramService.ActivateProgramAsync(programId, userId);
-            return Ok(ApiResponse<object>.SuccessMessage("Program başarıyla aktifleştirildi."));
+            return Ok(ApiResponse<object>.SuccessMessages("Program başarıyla aktifleştirildi."));
         }
     }
 }

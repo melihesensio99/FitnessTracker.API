@@ -2,6 +2,7 @@ using Application.Abstraction.Services;
 using Application.Common;
 using Application.Common.Pagination;
 using Application.DTO.Community.Comment;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -19,25 +20,28 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto createCommentDto, [FromQuery] int userId)
         {
             await _commentService.CreateCommentAsync(createCommentDto, userId);
-            return Ok(ApiResponse<object>.SuccessMessage("Yorum başarıyla eklendi."));
+            return Ok(ApiResponse<object>.SuccessMessages("Yorum başarıyla eklendi."));
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateComment(int id, [FromBody] UpdateCommentDto updateCommentDto, [FromQuery] int userId)
         {
             updateCommentDto.Id = id;
             await _commentService.UpdateCommentAsync(updateCommentDto, userId);
-            return Ok(ApiResponse<object>.SuccessMessage("Yorum başarıyla güncellendi."));
+            return Ok(ApiResponse<object>.SuccessMessages("Yorum başarıyla güncellendi."));
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteComment(int id, [FromQuery] int userId)
         {
             await _commentService.DeleteCommentAsync(id, userId);
-            return Ok(ApiResponse<object>.SuccessMessage("Yorum başarıyla silindi."));
+            return Ok(ApiResponse<object>.SuccessMessages("Yorum başarıyla silindi."));
         }
 
         [HttpGet("post/{postId}")]
@@ -48,6 +52,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("{id}/toggle-like")]
+        [Authorize]
         public async Task<IActionResult> ToggleCommentLike(int id, [FromQuery] int userId)
         {
             var isLiked = await _commentService.ToggleCommentLikeAsync(id, userId);

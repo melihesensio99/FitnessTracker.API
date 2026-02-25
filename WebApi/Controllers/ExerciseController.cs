@@ -1,6 +1,7 @@
 using Application.Abstraction.Services;
 using Application.Common;
 using Application.DTO.Exercise;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -47,6 +48,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody] CreateExerciseDto createDto)
         {
             var created = await _exerciseService.AddExerciseAsync(createDto);
@@ -55,17 +57,19 @@ namespace WebApi.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> Update([FromBody] UpdateExerciseDto updateDto)
         {
             await _exerciseService.UpdateExerciseAsync(updateDto);
-            return Ok(ApiResponse<object>.SuccessMessage("Egzersiz başarıyla güncellendi."));
+            return Ok(ApiResponse<object>.SuccessMessages("Egzersiz başarıyla güncellendi."));
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             await _exerciseService.DeleteExerciseAsync(id);
-            return Ok(ApiResponse<object>.SuccessMessage("Egzersiz başarıyla silindi."));
+            return Ok(ApiResponse<object>.SuccessMessages("Egzersiz başarıyla silindi."));
         }
     }
 }
