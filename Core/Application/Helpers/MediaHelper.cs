@@ -3,6 +3,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Application.Abstraction.Storage;
+using Application.Abstraction.Services;
+using Application.Events;
 
 namespace Application.Helpers
 {
@@ -35,6 +37,34 @@ namespace Application.Helpers
             var url = await storageService.UploadAsync(memoryStream, fileName, file.ContentType);
 
             return url;
+        }
+
+        public static async Task EnqueueMediaUploadAsync(IFormFile? file, IEventBus eventBus, string? folder = null)
+        {
+            if (file == null || file.Length == 0)
+                return;
+
+            var localStoreFolder = Path.Combine(Directory.GetCurrentDirectory(), "QueueStorage");
+            if (!Directory.Exists(localStoreFolder))
+            {
+                Directory.CreateDirectory(localStoreFolder);
+            }
+
+            var tempFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var tempPath = Path.Combine(localStoreFolder, tempFileName);
+
+            using (var stream = new FileStream(tempPath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            await eventBus.PublishAsync(new MediaUploadRequestedEvent 
+            {
+                TempFilePath = tempPath,
+                FolderName = folder,
+                ContentType = file.ContentType,
+                OriginalFileName = file.FileName
+            });
         }
 
   

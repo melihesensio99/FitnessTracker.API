@@ -1,5 +1,7 @@
 using Application.Abstraction.Storage;
+using Application.Abstraction.Services;
 using Application.Common;
+using Application.DTO.Media;
 using Application.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,21 +16,18 @@ namespace WebApi.Controllers
     public class MediaController : ControllerBase
     {
         private readonly IStorageService _storageService;
+        private readonly IEventBus _eventBus;
 
-        public MediaController(IStorageService storageService)
+        public MediaController(IStorageService storageService, IEventBus eventBus)
         {
             _storageService = storageService;
+            _eventBus = eventBus;
         }
 
         [HttpPost("upload/{folder?}")]
-        public async Task<IActionResult> UploadMedia(IFormFile file, [FromRoute] string? folder = null)
+        public async Task<IActionResult> UploadMedia([FromForm] UploadMediaDto request, [FromRoute] string? folder = null)
         {
-            if (file == null || file.Length == 0)
-            {
-                return BadRequest(ApiResponse<object>.ErrorResponse("Geçersiz veya boş dosya yüklendi."));
-            }
-
-            var url = await MediaHelper.UploadMediaAsync(file, _storageService, folder);
+            var url = await MediaHelper.UploadMediaAsync(request.File, _storageService, folder);
 
             if (string.IsNullOrEmpty(url))
             {
@@ -36,6 +35,14 @@ namespace WebApi.Controllers
             }
 
             return Ok(ApiResponse<object>.SuccessResponse(new { Url = url }, "Dosya başarıyla yüklendi."));
+        }
+
+        [HttpPost("upload-async/{folder?}")]
+        public async Task<IActionResult> UploadMediaAsync([FromForm] UploadMediaDto request, [FromRoute] string? folder = null)
+        {
+            await MediaHelper.EnqueueMediaUploadAsync(request.File, _eventBus, folder);
+
+            return Accepted(ApiResponse<object>.SuccessResponse(null, "Medya yükleme kuyruğuna alındı. Arka planda işlenecektir."));
         }
 
         [HttpDelete("delete")]

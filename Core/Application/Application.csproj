@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Include="DTO\Community\Post\CreatePostDto.cs" />
+    <None Include="Events\UserRegisteredEvent.cs" />
   </ItemGroup>
 
   <ItemGroup>

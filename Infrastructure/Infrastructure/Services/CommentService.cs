@@ -49,7 +49,6 @@ namespace Infrastructure.Services
                 ParentCommentId = request.ParentCommentId
             };
 
-            // If this is a reply, validate parent comment exists and belongs to the same post
             if (request.ParentCommentId.HasValue)
             {
                 var parentComment = await _commentRepository.GetByIdAsync(request.ParentCommentId.Value);
@@ -59,12 +58,10 @@ namespace Infrastructure.Services
                 if (parentComment.PostId != request.PostId)
                     throw new InvalidOperationException("Yanıt yapılan yorum bu posta ait değil.");
 
-                // Increment reply count on parent comment
                 parentComment.ReplyCount++;
                 _commentRepository.Update(parentComment);
             }
 
-            // Increment comment count on the post
             post.CommentCount++;
             _postRepository.Update(post);
 
@@ -98,13 +95,12 @@ namespace Infrastructure.Services
             var post = await _postRepository.GetByIdAsync(comment.PostId);
             if (post != null)
             {
-                // Count the comment itself + all its replies
                 int totalDeleted = 1 + (comment.Replies?.Count ?? 0);
                 post.CommentCount = Math.Max(0, post.CommentCount - totalDeleted);
                 _postRepository.Update(post);
             }
 
-            // If this is a reply, decrement parent's reply count
+         
             if (comment.ParentCommentId.HasValue)
             {
                 var parentComment = await _commentRepository.GetByIdAsync(comment.ParentCommentId.Value);
@@ -115,7 +111,6 @@ namespace Infrastructure.Services
                 }
             }
 
-            // Cascade delete will handle removing child replies
             _commentRepository.Remove(comment);
             await _unitOfWork.SaveAsync();
         }
@@ -126,7 +121,6 @@ namespace Infrastructure.Services
 
             var dtos = new List<ResultCommentDto>();
 
-            // Collect all comment IDs (parents + replies) for batch like lookup
             var allCommentIds = new List<int>();
             foreach (var comment in pagedComments.Data)
             {

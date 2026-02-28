@@ -31,5 +31,19 @@ namespace WebApi.Controllers
                 return BadRequest(ApiResponse<object>.ErrorResponse(ex.Message));
             }
         }
+
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
+        {
+            try
+            {
+                await _authService.ConfirmEmailAsync(userId, token);
+                return Ok(ApiResponse<object>.SuccessMessages("E-posta doğrulandı! Hoşgeldin maili gönderildi."));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<object>.ErrorResponse(ex.Message));
+            }
+        }
     }
 }

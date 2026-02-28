@@ -1,17 +1,20 @@
-﻿using Application.Abstraction.UnitOfWorks;
+﻿using Application.Abstraction.Event;
+using Application.Abstraction.Services;
+using Application.Abstraction.UnitOfWorks;
 using Application.Repositories;
+using Application.Repositories.CommunityRepository;
+using Application.Repositories.EntitiesRepository;
 using Domain.Entities;
+using Infrastructure.Services.Event;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Context.AppDbContext;
 using Persistence.Repositories;
+using Persistence.Repositories.CommunityRepository;
 using Persistence.Repositories.EntitiesRepository;
 using Persistence.UnitOfWorks;
-using Application.Repositories.EntitiesRepository;
-using Application.Repositories.CommunityRepository;
-using Persistence.Repositories.CommunityRepository;
 
 namespace Persistence
 {
@@ -30,7 +33,8 @@ namespace Persistence
                 options.User.RequireUniqueEmail = true;
             })
             .AddRoles<IdentityRole<int>>()
-            .AddEntityFrameworkStores<FitnessTrackerDbContext>();
+            .AddEntityFrameworkStores<FitnessTrackerDbContext>()
+            .AddDefaultTokenProviders();
 
           
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -41,6 +45,8 @@ namespace Persistence
             services.AddScoped<IPostLikeRepository, PostLikeRepository>();
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<ICommentLikeRepository, CommentLikeRepository>();
+
+           
 
         }
     }

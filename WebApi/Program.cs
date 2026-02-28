@@ -3,13 +3,12 @@ using Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Persistence; // Add references
-
+using Persistence; 
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;  // SymmetricSecurityKey için
-using System.Text;                     // Encoding.UTF8 için
-using System.Security.Claims;          // ClaimTypes için
+using Microsoft.IdentityModel.Tokens;  
+using System.Text;                   
+using System.Security.Claims;        
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +16,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 
-// Add CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
@@ -29,7 +27,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddPersistenceServices(builder.Configuration);
-builder.Services.AddInfrastructureService();    
+builder.Services.AddInfrastructureService(builder.Configuration);  
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddAuthentication(options =>
@@ -68,8 +66,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAll"); 
 app.UseHttpsRedirection();
-app.UseAuthentication();  // JWT token doğrulaması — Önce bu!
-app.UseAuthorization();   // [Authorize] attribute kontrolü — Sonra bu!
+app.UseAuthentication(); 
+app.UseAuthorization();   
 app.MapControllers();
 
 app.Run();
