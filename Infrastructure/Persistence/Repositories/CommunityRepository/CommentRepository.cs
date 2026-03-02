@@ -45,7 +45,7 @@ namespace Persistence.Repositories.CommunityRepository
                 TotalCount = totalCount,
                 CurrentPage = request.Page,
                 PageSize = request.PageSize,
-                TotalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize)
+         
             };
         }
 

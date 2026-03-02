@@ -1,4 +1,5 @@
-﻿using Application.Abstraction.Services;
+﻿using Application.Abstraction.Event;
+using Application.Abstraction.Services;
 using Application.Abstraction.Token;
 using Application.DTO.Authentication;
 using Application.Events;

@@ -150,7 +150,7 @@ namespace Infrastructure.Services
                 TotalCount = pagedComments.TotalCount,
                 CurrentPage = pagedComments.CurrentPage,
                 PageSize = pagedComments.PageSize,
-                TotalPages = pagedComments.TotalPages
+                
             };
         }
 

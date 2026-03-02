@@ -1,4 +1,5 @@
-﻿using Application.Abstraction.Services;
+﻿using Application.Abstraction.Event;
+using Application.Abstraction.Services;
 using Application.Abstraction.Storage;
 using Application.Abstraction.Token;
 using Infrastructure.Consumers;

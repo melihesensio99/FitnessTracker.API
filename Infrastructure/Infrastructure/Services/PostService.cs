@@ -168,7 +168,7 @@ namespace Infrastructure.Services
                 TotalCount = source.TotalCount,
                 CurrentPage = source.CurrentPage,
                 PageSize = source.PageSize,
-                TotalPages = source.TotalPages
+           
             };
         }
 

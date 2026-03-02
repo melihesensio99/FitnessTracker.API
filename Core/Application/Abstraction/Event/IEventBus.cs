@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Application.Abstraction.Event
 {
-    public interface IEvenetBus
+    public interface IEventBus
     {
         Task PublishAsync<T>(T Message, CancellationToken cancellationToken = default) where T : class;
     }

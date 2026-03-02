@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Application.Abstraction.Storage;
 using Application.Abstraction.Services;
 using Application.Events;
+using Application.Abstraction.Event;
 
 namespace Application.Helpers
 {
