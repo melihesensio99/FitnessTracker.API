@@ -24,18 +24,18 @@ namespace Infrastructure.Token
         {
             var tokenDto = new TokenDto();
 
-            // 1) Simetrik güvenlik anahtarı
+           
             var securityKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
 
-            // 2) İmzalama bilgileri
+            
             var signingCredentials = new SigningCredentials(
                 securityKey, SecurityAlgorithms.HmacSha256);
 
-            // 3) Token süresi (15 dakika)
+          
             tokenDto.Expiration = DateTime.UtcNow.AddMinutes(15);
 
-            // 4) Claim'ler — Token içine gömülecek kullanıcı bilgileri
+  
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
@@ -44,7 +44,7 @@ namespace Infrastructure.Token
                 new Claim("FullName", user.Name ?? "")
             };
 
-            // 5) JWT Token oluştur
+           
             var token = new JwtSecurityToken(
                 audience: _configuration["Token:Audience"],
                 issuer: _configuration["Token:Issuer"],
@@ -54,7 +54,7 @@ namespace Infrastructure.Token
                 claims: claims
             );
 
-            // 6) Token'ı string'e çevir
+            
             tokenDto.AccessToken = new JwtSecurityTokenHandler().WriteToken(token);
 
             return tokenDto;

@@ -20,7 +20,7 @@ namespace Infrastructure.Consumers
         {
             var message = context.Message;
 
-            var verificationLink = $"https://localhost:7001/api/auth/confirm-email" +
+            var verificationLink = $"https://localhost:5085/api/auth/confirm-email" +
                                    $"?userId={message.UserId}&token={message.VerificationToken}";
 
             _logger.LogInformation("[Email] Doğrulama maili gönderiliyor: {Email}", message.Email);

@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # 1. VERITABANI: PostgreSQL
+  # ==========================================
+  postgres:
+    image: postgres:15-alpine # Hafif ve hizli alpine surumu
+    container_name: fitness_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456 # appsettings.json dosyasindaki sifren
+      POSTGRES_DB: fitnesstracker # appsettings.json dosyasindaki db adin
+    ports:
+      - "5433:5432" # Uygulaman localhost:5433'den baglanacak
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Bilgisayar kapansa da veriler silinmesin diye
+    restart: always
+    networks:
+      - fitness_network
+
+  # ==========================================
+  # 2. MESAJ KUYRUGU: RabbitMQ
+  # ==========================================
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine # Hem RabbitMQ hem de Management (Gorsel Panel) icerir
+    container_name: fitness_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest # appsettings.json dosyasindaki 
+      RABBITMQ_DEFAULT_PASS: guest # appsettings.json dosyasindaki
+    ports:
+      - "5672:5672"   # Uygulamanin (MassTransit'in) baglandigi port
+      - "15672:15672" # Tarayicidan girdigin Management Panel Portu
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq # Mesajlar silinmesin diye
+    restart: always
+    networks:
+      - fitness_network
+
+  # ==========================================
+  # 3. ELASTIC APM & LOG YONETIMI (Kibana+ES)
+  # ==========================================
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.22
+    container_name: fitness_elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # Bilgisayari fazla yormamasi icin sinir
+    ports:
+      - "9200:9200"
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+    restart: always
+    networks:
+      - fitness_network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.22
+    container_name: fitness_kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - xpack.fleet.agents.fleet_server.hosts=["http://localhost:8220"] # (Bypass için)
+      - xpack.apm.ui.enabled=true  # Arayüzü manuel açmak için
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    restart: always
+    networks:
+      - fitness_network
+
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:7.17.22
+    container_name: fitness_apm
+    command: >
+      apm-server -e
+      -E setup.kibana.host=kibana:5601
+      -E setup.template.settings.index.number_of_replicas=0
+      -E apm-server.kibana.enabled=true
+      -E apm-server.kibana.host=kibana:5601
+      -E output.elasticsearch.hosts=["elasticsearch:9200"]
+      -E apm-server.host=0.0.0.0:8200
+    ports:
+      - "8200:8200"
+    depends_on:
+      - elasticsearch
+      - kibana
+    restart: always
+    networks:
+      - fitness_network
+
+# Verilerin bilgisayarinda kalici olarak saklanacagi sanal klasorler (Volumes)
+volumes:
+  postgres_data:
+  rabbitmq_data:
+  elastic_data:
+
+# Tüm bu sistemlerin birbirleriyle konusmasini saglayan (Ornegin APM'in ES'yi bulmasi) ic ag
+networks:
+  fitness_network:
+    driver: bridge

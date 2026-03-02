@@ -1,5 +1,6 @@
 using Application.Abstraction.Services;
 using Application.Common;
+using Application.Common.Pagination;
 using Application.DTO.Exercise;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,19 +33,18 @@ namespace WebApi.Controllers
             var exercise = await _exerciseService.GetExerciseByIdAsync(id);
             return Ok(ApiResponse<ExerciseDto>.SuccessResponse(exercise));
         }
-
         [HttpGet("Search")]
-        public async Task<IActionResult> Search([FromQuery] string name)
+        public async Task<IActionResult> Search([FromQuery] string name, [FromQuery] PagedRequest request)
         {
-            var exercises = await _exerciseService.SearchExercisesByNameAsync(name);
-            return Ok(ApiResponse<List<ExerciseDto>>.SuccessResponse(exercises));
+            var exercises = await _exerciseService.SearchExercisesByNameAsync(name, request);
+            return Ok(ApiResponse<PagedResponse<ExerciseDto>>.SuccessResponse(exercises));
         }
 
         [HttpGet("ByMuscleGroup/{muscleGroup}")]
-        public async Task<IActionResult> GetByMuscleGroup([FromRoute] string muscleGroup)
+        public async Task<IActionResult> GetByMuscleGroup([FromRoute] string muscleGroup, [FromQuery] PagedRequest request)
         {
-            var exercises = await _exerciseService.GetExercisesByMuscleGroup(muscleGroup);
-            return Ok(ApiResponse<ExerciseDto>.SuccessResponse(exercises));
+            var exercises = await _exerciseService.GetExercisesByMuscleGroup(muscleGroup, request);
+            return Ok(ApiResponse<PagedResponse<ExerciseDto>>.SuccessResponse(exercises));
         }
 
         [HttpPost]

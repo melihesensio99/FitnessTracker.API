@@ -1,10 +1,14 @@
-﻿using Application.Repositories.EntitiesRepository;
+﻿using Application.Common.Pagination;
+using Application.Repositories.EntitiesRepository;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context.AppDbContext;
+using Persistence.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Persistence.Repositories.EntitiesRepository
 {
@@ -17,22 +21,18 @@ namespace Persistence.Repositories.EntitiesRepository
             _context = context;
         }
 
-        public async Task<List<Exercise>> GetExercisesByMuscleGroup(string muscleGroup)
+        public async Task<PagedResponse<Exercise>> GetExercisesByMuscleGroup(string muscleGroup, PagedRequest request)
         {
-            var exercises = await _context.Exercises
+            return await _context.Exercises
                    .Where(e => e.TargetMuscle.ToLower() == muscleGroup.ToLower())
-                   .ToListAsync();
-
-            return exercises;
+                   .ToPagedResponseAsync(request);
         }
 
-        public async Task<List<Exercise>> SearchExercisesByNameAsync(string name)
+        public async Task<PagedResponse<Exercise>> SearchExercisesByNameAsync(string name, PagedRequest request)
         {
-            var exercises = await _context.Exercises
+            return await _context.Exercises
              .Where(e => e.ExerciseName.ToLower().Contains(name.ToLower()))
-             .ToListAsync();
-
-            return exercises;
+             .ToPagedResponseAsync(request);
         }
     }
 }

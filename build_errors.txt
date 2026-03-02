@@ -1,0 +1,10 @@
+C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\Infrastructure\Infrastructure\Services\ExerciseService.cs(70,10): error CS1513: } bekleniyor [C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\Infrastructure\Infrastructure\Infrastructure.csproj]
+C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\Infrastructure\Infrastructure\Services\ExerciseService.cs(72,1): error CS1529: Using yan tümcesi extern diğer ad bildirimleri dışında ad uzayında tanımlanan diğer tüm öğelerden önce gelmelidir [C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\Infrastructure\Infrastructure\Infrastructure.csproj]
+C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\Infrastructure\Infrastructure\Services\ExerciseService.cs(73,1): error CS1529: Using yan tümcesi extern diğer ad bildirimleri dışında ad uzayında tanımlanan diğer tüm öğelerden önce gelmelidir [C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\Infrastructure\Infrastructure\Infrastructure.csproj]
+C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\Infrastructure\Infrastructure\Services\ExerciseService.cs(122,1): error CS1022: Tür veya ad uzayı tanımı ya da dosya sonu bekleniyor [C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\Infrastructure\Infrastructure\Infrastructure.csproj]
+
+Oluşturma BAŞARISIZ OLDU.
+    0 Uyarı
+    4 Hata
+
+Geçen Süre 00:00:02.76

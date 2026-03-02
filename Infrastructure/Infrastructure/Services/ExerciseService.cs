@@ -1,4 +1,5 @@
-﻿using Application.DTO.Exercise;
+﻿using Application.Common.Pagination;
+using Application.DTO.Exercise;
 using Application.Exceptions;
 using Application.Abstraction.Services;
 using Application.Abstraction.UnitOfWorks;
@@ -7,7 +8,9 @@ using AutoMapper;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
@@ -69,26 +72,39 @@ namespace Infrastructure.Services
             return mapping;
         }
 
-        public async Task<ExerciseDto> GetExercisesByMuscleGroup(string muscleGroup)
+
+        public async Task<PagedResponse<ExerciseDto>> GetExercisesByMuscleGroup(string muscleGroup, PagedRequest request)
         {
-            var exerciseWithMuscleGroup = await _repository.GetExercisesByMuscleGroup(muscleGroup);
-            if (exerciseWithMuscleGroup == null)
+            var pagedEntities = await _repository.GetExercisesByMuscleGroup(muscleGroup, request);
+            if (pagedEntities == null)
             {
                 throw new NotFoundException(nameof(Exercise), $"No exercise found for muscle group: {muscleGroup}");
             }
-            var mapping = _mapper.Map<ExerciseDto>(exerciseWithMuscleGroup);
-            return mapping;
+            return new PagedResponse<ExerciseDto>
+            {
+                Data = _mapper.Map<List<ExerciseDto>>(pagedEntities.Data),
+                TotalCount = pagedEntities.TotalCount,
+                CurrentPage = pagedEntities.CurrentPage,
+                PageSize = pagedEntities.PageSize,
+                TotalPages = pagedEntities.TotalPages
+            };
         }
 
-        public async Task<List<ExerciseDto>> SearchExercisesByNameAsync(string name)
+        public async Task<PagedResponse<ExerciseDto>> SearchExercisesByNameAsync(string name, PagedRequest request)
         {
-            var searchByName = await _repository.SearchExercisesByNameAsync(name);
-            if (searchByName == null)
+            var pagedEntities = await _repository.SearchExercisesByNameAsync(name, request);
+            if (pagedEntities == null)
             {
                 throw new NotFoundException(nameof(Exercise), $"No exercise found with name containing: {name}");
             }
-            var mapping = _mapper.Map<List<ExerciseDto>>(searchByName);
-            return mapping;
+            return new PagedResponse<ExerciseDto>
+            {
+                Data = _mapper.Map<List<ExerciseDto>>(pagedEntities.Data),
+                TotalCount = pagedEntities.TotalCount,
+                CurrentPage = pagedEntities.CurrentPage,
+                PageSize = pagedEntities.PageSize,
+                TotalPages = pagedEntities.TotalPages
+            };
         }
 
         public async Task<bool> UpdateExerciseAsync(UpdateExerciseDto updateDto)

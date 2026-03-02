@@ -10,6 +10,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;                   
 using System.Security.Claims;        
 
+using Elastic.Apm.NetCoreAll;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -55,8 +57,9 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 var app = builder.Build();
+
+app.UseAllElasticApm(builder.Configuration);
 
 if (app.Environment.IsDevelopment())
 {

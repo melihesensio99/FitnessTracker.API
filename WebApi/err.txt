@@ -1,0 +1,14 @@
+C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\Program.cs(61,46): error CS0234: 'Models' tür veya ad alanı adı 'Microsoft.OpenApi' ad alanında yok (bir derleme başvurunuz mu eksik?) [C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\WebApi.csproj]
+C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\Program.cs(62,61): error CS0234: 'Models' tür veya ad alanı adı 'Microsoft.OpenApi' ad alanında yok (bir derleme başvurunuz mu eksik?) [C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\WebApi.csproj]
+C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\Program.cs(65,16): error CS0234: 'Models' tür veya ad alanı adı 'Microsoft.OpenApi' ad alanında yok (bir derleme başvurunuz mu eksik?) [C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\WebApi.csproj]
+C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\Program.cs(68,14): error CS0234: 'Models' tür veya ad alanı adı 'Microsoft.OpenApi' ad alanında yok (bir derleme başvurunuz mu eksik?) [C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\WebApi.csproj]
+C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\Program.cs(71,52): error CS0234: 'Models' tür veya ad alanı adı 'Microsoft.OpenApi' ad alanında yok (bir derleme başvurunuz mu eksik?) [C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\WebApi.csproj]
+C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\Program.cs(74,35): error CS0234: 'Models' tür veya ad alanı adı 'Microsoft.OpenApi' ad alanında yok (bir derleme başvurunuz mu eksik?) [C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\WebApi.csproj]
+C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\Program.cs(76,51): error CS0234: 'Models' tür veya ad alanı adı 'Microsoft.OpenApi' ad alanında yok (bir derleme başvurunuz mu eksik?) [C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\WebApi.csproj]
+C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\Program.cs(78,28): error CS0234: 'Models' tür veya ad alanı adı 'Microsoft.OpenApi' ad alanında yok (bir derleme başvurunuz mu eksik?) [C:\Users\melih\.gemini\antigravity\scratch\FitnessTracker\WebApi\WebApi.csproj]
+
+Oluşturma BAŞARISIZ OLDU.
+    3 Uyarı
+    8 Hata
+
+Geçen Süre 00:00:02.97
