@@ -8,7 +8,7 @@ using AutoMapper;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
-using System.Text;
+
 using System.Linq;
 using Application.Exceptions;
 using Application.Common.Pagination;
@@ -76,7 +76,7 @@ namespace Infrastructure.Services
             }
 
             var userPrograms = await _repository.GetUserProgramsAsync(userId);
-            if (userPrograms.Any(p => p.Title == originalProgram.Title))
+            if (userPrograms.Any(p => p.BaseProgramId == programId))
             {
                 throw new ValidationException("Bu programa zaten katıldınız (kütüphanenizde mevcut).");
             }
@@ -203,8 +203,8 @@ namespace Infrastructure.Services
                 Data = dtoList,
                 TotalCount = pagedEntities.TotalCount,
                 CurrentPage = pagedEntities.CurrentPage,
-                PageSize = pagedEntities.PageSize,
-                TotalPages = (int)Math.Ceiling(pagedEntities.TotalCount / (double)pagedEntities.PageSize)
+                PageSize = pagedEntities.PageSize
+                // TotalPages PagedResponse içinde otomatik hesaplanır
             };
         }
 

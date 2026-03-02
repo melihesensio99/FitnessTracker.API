@@ -8,7 +8,7 @@ using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+
 
 namespace Infrastructure.Services
 {
@@ -27,9 +27,10 @@ namespace Infrastructure.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<WorkoutLogDto> AddWorkoutLogAsync(CreateWorkoutLogDto createDto)
+        public async Task<WorkoutLogDto> AddWorkoutLogAsync(CreateWorkoutLogDto createDto, int userId)
         {
             var workoutLog = _mapper.Map<WorkoutLog>(createDto);
+            workoutLog.UserId = userId; // Her zaman token'dan alınır
 
             var targetExercise = await _programExerciseRepository.GetByIdAsync(workoutLog.ProgramExerciseId);
 

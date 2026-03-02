@@ -10,6 +10,13 @@ namespace Application.Common.Pagination
         public int TotalCount { get; set; }
         public int CurrentPage { get; set; }
         public int PageSize { get; set; }
-        public int TotalPages { get; set; }
+
+        /// <summary>
+        /// TotalCount ve PageSize'dan otomatik hesaplanır.
+        /// Elle set etmeye gerek yoktur.
+        /// </summary>
+        public int TotalPages => PageSize > 0
+            ? (int)Math.Ceiling(TotalCount / (double)PageSize)
+            : 0;
     }
 }

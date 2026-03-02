@@ -5,7 +5,7 @@ namespace Application.DTO.WorkoutLog
 {
     public class CreateWorkoutLogDto
     {
-        public int UserId { get; set; }
+        // UserId burada YOK — token'dan alınır, client'tan gelmez
         public int ProgramExerciseId { get; set; }
         public int ActualSet { get; set; }
         public int ActualRep { get; set; }

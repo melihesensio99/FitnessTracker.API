@@ -9,7 +9,7 @@ using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+
 using System.Threading.Tasks;
 
 namespace Infrastructure.Services
@@ -85,8 +85,8 @@ namespace Infrastructure.Services
                 Data = _mapper.Map<List<ExerciseDto>>(pagedEntities.Data),
                 TotalCount = pagedEntities.TotalCount,
                 CurrentPage = pagedEntities.CurrentPage,
-                PageSize = pagedEntities.PageSize,
-                TotalPages = pagedEntities.TotalPages
+                PageSize = pagedEntities.PageSize
+                // TotalPages PagedResponse içinde otomatik hesaplanır
             };
         }
 
@@ -102,8 +102,8 @@ namespace Infrastructure.Services
                 Data = _mapper.Map<List<ExerciseDto>>(pagedEntities.Data),
                 TotalCount = pagedEntities.TotalCount,
                 CurrentPage = pagedEntities.CurrentPage,
-                PageSize = pagedEntities.PageSize,
-                TotalPages = pagedEntities.TotalPages
+                PageSize = pagedEntities.PageSize
+                // TotalPages PagedResponse içinde otomatik hesaplanır
             };
         }
 

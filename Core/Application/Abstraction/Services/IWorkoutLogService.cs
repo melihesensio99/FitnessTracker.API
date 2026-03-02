@@ -12,7 +12,7 @@ namespace Application.Abstraction.Services
         Task<List<WorkoutLogDto>> GetExerciseLogsAsync(int programExerciseId);
         Task<List<WorkoutLogDto>> GetLogsByDateRangeAsync(int userId, DateTime startDate, DateTime endDate);
         Task<WorkoutLogDto?> GetUserLastLogAsync(int userId, int programExerciseId);
-        Task<WorkoutLogDto> AddWorkoutLogAsync(CreateWorkoutLogDto createDto);
+        Task<WorkoutLogDto> AddWorkoutLogAsync(CreateWorkoutLogDto createDto, int userId);
 
     }
 }

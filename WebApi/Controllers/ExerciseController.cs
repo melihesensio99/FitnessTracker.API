@@ -11,7 +11,7 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ExerciseController : ControllerBase
+    public class ExerciseController : BaseController
     {
         private readonly IExerciseService _exerciseService;
 

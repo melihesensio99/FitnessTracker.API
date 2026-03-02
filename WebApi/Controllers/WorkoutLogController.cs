@@ -21,8 +21,8 @@ namespace WebApi.Controllers
         [Authorize]
         public async Task<IActionResult> AddWorkoutLog([FromBody] CreateWorkoutLogDto createDto)
         {
-            createDto.UserId = GetCurrentUserId();
-            var result = await _workoutLogService.AddWorkoutLogAsync(createDto);
+            var userId = GetCurrentUserId();
+            var result = await _workoutLogService.AddWorkoutLogAsync(createDto, userId);
             return Ok(ApiResponse<WorkoutLogDto>.SuccessResponse(result, "Antrenman kaydı başarıyla eklendi."));
         }
 
@@ -51,6 +51,15 @@ namespace WebApi.Controllers
             var userId = GetCurrentUserId();
             var logs = await _workoutLogService.GetLogsByDateRangeAsync(userId, startDate, endDate);
             return Ok(ApiResponse<List<WorkoutLogDto>>.SuccessResponse(logs));
+        }
+
+        [HttpGet("last/{programExerciseId}")]
+        [Authorize]
+        public async Task<IActionResult> GetUserLastLog(int programExerciseId)
+        {
+            var userId = GetCurrentUserId();
+            var log = await _workoutLogService.GetUserLastLogAsync(userId, programExerciseId);
+            return Ok(ApiResponse<WorkoutLogDto?>.SuccessResponse(log));
         }
     }
 }
