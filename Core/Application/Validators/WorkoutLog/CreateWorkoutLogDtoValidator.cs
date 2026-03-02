@@ -15,7 +15,7 @@ namespace Application.Validators.WorkoutLog
                 .LessThanOrEqualTo(20).WithMessage("Yapılan set sayısı 20'den fazla olamaz.");
 
             RuleFor(x => x.ActualRep)
-                .GreaterThan(0).WithMessage("Yapılan tekrar sayısı 0'dan büyük olmalıdır.")
+                .GreaterThanOrEqualTo(0).WithMessage("Yapılan tekrar sayısı negatif olamaz.")
                 .LessThanOrEqualTo(100).WithMessage("Yapılan tekrar sayısı 100'den fazla olamaz.");
 
             RuleFor(x => x.ActualWeight)

@@ -4,6 +4,7 @@ using Application.DTO.WorkoutLog;
 using Application.DTO.WorkoutProgram;
 using AutoMapper;
 using Domain.Entities;
+using System.Linq;
 
 namespace Application.Mapping
 {
@@ -19,7 +20,6 @@ namespace Application.Mapping
 
             
             CreateMap<ProgramExercise, ProgramExerciseDto>()
-                // ExerciseName gibi DTO'da olup da Entity'de bir alt objede (Exercise tablosunda) 
                 .ForMember(dest => dest.ExerciseName, opt => opt.MapFrom(src => src.Exercise != null ? src.Exercise.ExerciseName : null))
                 .ReverseMap();
             CreateMap<ProgramExercise, CreateProgramExerciseDto>().ReverseMap();
@@ -30,8 +30,14 @@ namespace Application.Mapping
             CreateMap<Exercise, CreateExerciseDto>().ReverseMap();
 
          
-            CreateMap<WorkoutLog, WorkoutLogDto>().ReverseMap();
-            CreateMap<WorkoutLog, CreateWorkoutLogDto>().ReverseMap();
+            CreateMap<WorkoutLog, WorkoutLogDto>()
+                .ForMember(dest => dest.ExerciseName, opt => opt.MapFrom(src => src.ProgramExercise != null && src.ProgramExercise.Exercise != null ? src.ProgramExercise.Exercise.ExerciseName : null))
+                .ForMember(dest => dest.programExerciseDto, opt => opt.MapFrom(src => src.ProgramExercise))
+                .ReverseMap();
+            CreateMap<WorkoutLog, CreateWorkoutLogDto>()
+                .ForMember(dest => dest.ActualWeight, opt => opt.MapFrom(src => src.Weight))
+                .ReverseMap()
+                .ForMember(dest => dest.Weight, opt => opt.MapFrom(src => src.ActualWeight));
 
             // Community & Post Mappings
             CreateMap<Domain.Entities.Community.Post, Application.DTO.Community.Post.CreatePostDto>().ReverseMap();

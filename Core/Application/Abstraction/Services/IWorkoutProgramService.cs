@@ -10,9 +10,9 @@ namespace Application.Abstraction.Services
     {
         Task<List<WorkoutProgramDto>> GetUserProgramsAsync(int userId);
         Task<WorkoutProgramDto> GetWorkoutProgramDetailByIdAsync(int Id);
-        Task<WorkoutProgramDto> AddWorkoutProgramAsync(CreateWorkoutProgramDto createDto);
-        Task<bool> DeleteWorkoutProgramAsync(int programId);
-        Task<bool> UpdateWorkoutProgramAsync(UpdateWorkoutProgramDto updateDto);
+        Task<WorkoutProgramDto> AddWorkoutProgramAsync(CreateWorkoutProgramDto createDto, int userId);
+        Task<bool> DeleteWorkoutProgramAsync(int programId, int userId);
+        Task<bool> UpdateWorkoutProgramAsync(UpdateWorkoutProgramDto updateDto, int userId);
         Task<int> CloneSystemProgramToUserAsync(int programId, int userId);
         Task<PagedResponse<WorkoutProgramDto>> GetFilteredProgramsAsync(WorkoutProgramFilteredDto filter);
         Task<bool> ActivateProgramAsync(int programId, int userId);

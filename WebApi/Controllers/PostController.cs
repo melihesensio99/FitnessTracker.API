@@ -10,7 +10,7 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostController : ControllerBase
+    public class PostController : BaseController
     {
         private readonly IPostService _postService;
 
@@ -19,84 +19,93 @@ namespace WebApi.Controllers
             _postService = postService;
         }
 
+
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreatePost([FromForm] CreatePostDto createPostDto, [FromQuery] int userId)
+        public async Task<IActionResult> CreatePost([FromForm] CreatePostDto createPostDto)
         {
+            var userId = GetCurrentUserId(); // Token'dan geliyor
             await _postService.CreatePostAsync(createPostDto, userId);
             return Ok(ApiResponse<object>.SuccessMessages("Post başarıyla oluşturuldu."));
         }
 
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> UpdatePost(int id, [FromForm] UpdatePostDto updatePostDto, [FromQuery] int userId)
+        public async Task<IActionResult> UpdatePost(int id, [FromForm] UpdatePostDto updatePostDto)
         {
+            var userId = GetCurrentUserId(); // Token'dan geliyor
             updatePostDto.Id = id;
             await _postService.UpdatePostAsync(updatePostDto, userId);
             return Ok(ApiResponse<object>.SuccessMessages("Post başarıyla güncellendi."));
         }
 
         [HttpGet("feed")]
-        public async Task<IActionResult> GetFeed([FromQuery] PagedRequest request, [FromQuery] int currentUserId)
+        public async Task<IActionResult> GetFeed([FromQuery] PagedRequest request)
         {
+            var currentUserId = GetCurrentUserIdOrDefault(); // Giriş yapmamış olabilir
             var response = await _postService.GetPostsAsync(request, currentUserId);
             return Ok(ApiResponse<PagedResponse<ResultPostDto>>.SuccessResponse(response));
         }
 
         [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetUserPosts(int userId, [FromQuery] PagedRequest request, [FromQuery] int currentUserId)
+        public async Task<IActionResult> GetUserPosts(int userId, [FromQuery] PagedRequest request)
         {
+            var currentUserId = GetCurrentUserIdOrDefault();
             var response = await _postService.GetPostsAsync(request, currentUserId, filterUserId: userId);
             return Ok(ApiResponse<PagedResponse<ResultPostDto>>.SuccessResponse(response));
         }
 
         [HttpGet("trending")]
-        public async Task<IActionResult> GetTrending([FromQuery] PagedRequest request, [FromQuery] int currentUserId, [FromQuery] int days = 7)
+        public async Task<IActionResult> GetTrending([FromQuery] PagedRequest request, [FromQuery] int days = 7)
         {
+            var currentUserId = GetCurrentUserIdOrDefault();
             var response = await _postService.GetTrendingPostsAsync(request, currentUserId, days);
             return Ok(ApiResponse<PagedResponse<ResultPostDto>>.SuccessResponse(response));
         }
 
-        [HttpGet("liked/{userId}")]
+        [HttpGet("liked")]
         [Authorize]
-        public async Task<IActionResult> GetLikedPosts(int userId, [FromQuery] PagedRequest request, [FromQuery] int currentUserId)
+        public async Task<IActionResult> GetLikedPosts([FromQuery] PagedRequest request)
         {
-            var response = await _postService.GetLikedPostsByUserIdAsync(userId, currentUserId, request);
+            var currentUserId = GetCurrentUserId(); // Token'dan geliyor
+            var response = await _postService.GetLikedPostsByUserIdAsync(currentUserId, currentUserId, request);
             return Ok(ApiResponse<PagedResponse<ResultPostDto>>.SuccessResponse(response));
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchPosts([FromQuery] string keyword, [FromQuery] PagedRequest request, [FromQuery] int currentUserId)
+        public async Task<IActionResult> SearchPosts([FromQuery] string keyword, [FromQuery] PagedRequest request)
         {
             if (string.IsNullOrWhiteSpace(keyword))
-            {
                 return BadRequest(ApiResponse<object>.ErrorResponse("Arama kelimesi boş olamaz."));
-            }
 
+            var currentUserId = GetCurrentUserIdOrDefault();
             var response = await _postService.SearchPostsAsync(keyword, request, currentUserId);
             return Ok(ApiResponse<PagedResponse<ResultPostDto>>.SuccessResponse(response));
         }
 
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<IActionResult> DeletePost(int id, [FromQuery] int userId)
+        public async Task<IActionResult> DeletePost(int id)
         {
+            var userId = GetCurrentUserId(); // Token'dan geliyor
             await _postService.DeletePostAsync(id, userId);
             return Ok(ApiResponse<object>.SuccessMessages("Post başarıyla silindi."));
         }
 
         [HttpPut("{id}/visibility")]
         [Authorize]
-        public async Task<IActionResult> UpdatePostVisibility(int id, [FromQuery] int userId, [FromQuery] Domain.Enums.VisibilityType visibility)
+        public async Task<IActionResult> UpdatePostVisibility(int id, [FromQuery] Domain.Enums.VisibilityType visibility)
         {
+            var userId = GetCurrentUserId(); // Token'dan geliyor
             await _postService.UpdatePostVisibilityAsync(id, userId, visibility);
             return Ok(ApiResponse<object>.SuccessMessages("Görünürlük başarıyla güncellendi."));
         }
 
         [HttpPost("{id}/toggle-like")]
         [Authorize]
-        public async Task<IActionResult> ToggleLike(int id, [FromQuery] int userId)
+        public async Task<IActionResult> ToggleLike(int id)
         {
+            var userId = GetCurrentUserId(); // Token'dan geliyor
             var isLiked = await _postService.ToggleLikeAsync(id, userId);
             var message = isLiked ? "Gönderi beğenildi." : "Gönderi beğenmekten vazgeçildi.";
             return Ok(ApiResponse<bool>.SuccessResponse(isLiked, message));

@@ -1,3 +1,4 @@
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,7 +14,7 @@ namespace Domain.Entities
         public int ActualRep { get; set; }
         public int Weight { get; set; }
         public DateTime Date { get; set; }
-        public bool IsSuccess { get; set; }
+        public WorkoutStatus Status { get; set; }
         public User User { get; set; }
         public ProgramExercise ProgramExercise { get; set; }
     }

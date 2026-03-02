@@ -14,6 +14,7 @@ namespace Application.DTO.WorkoutProgram
         public string Ambition { get; set; }
         public bool IsPublic { get; set; }
         public bool IsActive { get; set; }
+        public int? BaseProgramId { get; set; }
         public ICollection<ProgramExerciseDto> ProgramExercises { get; set; } = new List<ProgramExerciseDto>();
     }
 }

@@ -37,7 +37,7 @@ namespace Infrastructure.Services
             _storageService = storageService;
         }
 
-        public async Task<WorkoutProgramDto> AddWorkoutProgramAsync(CreateWorkoutProgramDto createDto)
+        public async Task<WorkoutProgramDto> AddWorkoutProgramAsync(CreateWorkoutProgramDto createDto, int userId)
         {
             if (createDto == null) throw new ArgumentNullException(nameof(createDto));
 
@@ -54,13 +54,14 @@ namespace Infrastructure.Services
             }
 
             var mapping = _mapper.Map<WorkoutProgram>(createDto);
+            mapping.UserId = userId;
+
             await _repository.AddAsync(mapping);
             await _unitOfWork.SaveAsync();
-            var result = _mapper.Map<WorkoutProgramDto>(mapping);
-            return result;
+            return _mapper.Map<WorkoutProgramDto>(mapping);
         }
 
-        public async Task<int> CloneSystemProgramToUserAsync(int programId, int userId) // navigator.navigate("ProgramDetailScreen", { programId: 1048 }) for frontend
+        public async Task<int> CloneSystemProgramToUserAsync(int programId, int userId)
         {
             var originalProgram = await _repository.GetWorkoutProgramDetailWithExercisesAsync(programId);
 
@@ -88,12 +89,17 @@ namespace Infrastructure.Services
             return clonedProgram.Id;
         }
 
-        public async Task<bool> DeleteWorkoutProgramAsync(int programId)
+        public async Task<bool> DeleteWorkoutProgramAsync(int programId, int userId)
         {
             var program = await _repository.GetByIdAsync(programId);
             if (program == null)
             {
                 throw new NotFoundException(nameof(WorkoutProgram), programId);
+            }
+
+            if (program.UserId != userId)
+            {
+                throw new UnauthorizedAccessException("Bu programı silme yetkiniz yok.");
             }
 
             if (!string.IsNullOrEmpty(program.ImageUrl))
@@ -109,19 +115,16 @@ namespace Infrastructure.Services
         public async Task<List<WorkoutProgramDto>> GetUserProgramsAsync(int userId)
         {
             var userPrograms = await _repository.GetUserProgramsAsync(userId);
-            var resultDto = _mapper.Map<List<WorkoutProgramDto>>(userPrograms);
-            return resultDto;
+            return _mapper.Map<List<WorkoutProgramDto>>(userPrograms);
         }
 
         public async Task<WorkoutProgramDto> GetWorkoutProgramDetailByIdAsync(int Id)
         {
             var program = await _repository.GetWorkoutProgramDetailWithExercisesAsync(Id);
-
-            var resultDto = _mapper.Map<WorkoutProgramDto>(program);
-
-            return resultDto;
+            return _mapper.Map<WorkoutProgramDto>(program);
         }
-        public async Task<bool> UpdateWorkoutProgramAsync(UpdateWorkoutProgramDto updateDto)
+
+        public async Task<bool> UpdateWorkoutProgramAsync(UpdateWorkoutProgramDto updateDto, int userId)
         {
             if (updateDto == null) throw new ValidationException("Güncellenecek veri boş olamaz.");
             var existingProgram = await _repository.GetWorkoutProgramDetailWithExercisesAsync(updateDto.Id);
@@ -131,14 +134,23 @@ namespace Infrastructure.Services
                 throw new NotFoundException(nameof(WorkoutProgram), updateDto.Id);
             }
 
+            if (existingProgram.UserId != userId)
+            {
+                throw new UnauthorizedAccessException("Bu programı güncelleme yetkiniz yok.");
+            }
+
+            if (existingProgram.BaseProgramId.HasValue)
+            {
+                throw new ValidationException("Kütüphanenize kopyalanan programlar üzerinde düzenleme yapamazsınız. Detaylı değişiklikler için kendi programınızı oluşturmalısınız.");
+            }
+
             var oldImageUrl = existingProgram.ImageUrl;
 
             _mapper.Map(updateDto, existingProgram);
+            existingProgram.UserId = userId;
 
-            
             if (oldImageUrl != existingProgram.ImageUrl && !string.IsNullOrEmpty(oldImageUrl))
             {
-              
                  await MediaHelper.DeleteMediaAsync(oldImageUrl, _storageService);
             }
 

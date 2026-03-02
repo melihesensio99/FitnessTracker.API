@@ -16,6 +16,7 @@ namespace Domain.Entities
         public string Ambition { get; set; }
         public bool IsPublic { get; set; }
         public bool IsActive { get; set; }
+        public int? BaseProgramId { get; set; }
         public User User { get; set; }
         public ICollection<ProgramExercise> ProgramExercises { get; set; } = new List<ProgramExercise>();
 
@@ -24,6 +25,7 @@ namespace Domain.Entities
             return new WorkoutProgram
             {
                 UserId = userId,
+                BaseProgramId = this.Id, // Track where this was cloned from
                 Title = this.Title,
                 Description = this.Description,
                 Level = this.Level,

@@ -33,7 +33,7 @@ namespace Infrastructure.Token
                 securityKey, SecurityAlgorithms.HmacSha256);
 
           
-            tokenDto.Expiration = DateTime.UtcNow.AddMinutes(15);
+            tokenDto.Expiration = DateTime.UtcNow.AddDays(7);
 
   
             var claims = new List<Claim>

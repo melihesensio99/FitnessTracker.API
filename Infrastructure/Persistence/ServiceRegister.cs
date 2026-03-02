@@ -40,6 +40,7 @@ namespace Persistence
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IExerciseRepository, ExerciseRepository>();
             services.AddScoped<IWorkoutProgramRepository, WorkoutProgramRepository>();
+            services.AddScoped<IProgramExerciseRepository, ProgramExerciseRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<IPostLikeRepository, PostLikeRepository>();

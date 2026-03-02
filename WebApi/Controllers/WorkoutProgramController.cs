@@ -11,7 +11,7 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WorkoutProgramController : ControllerBase
+    public class WorkoutProgramController : BaseController
     {
         private readonly IWorkoutProgramService _workoutProgramService;
 
@@ -27,10 +27,11 @@ namespace WebApi.Controllers
             return Ok(ApiResponse<PagedResponse<WorkoutProgramDto>>.SuccessResponse(response));
         }
 
-        [HttpGet("user/{userId}")]
+        [HttpGet("user")]
         [Authorize]
-        public async Task<IActionResult> GetUserPrograms(int userId)
+        public async Task<IActionResult> GetUserPrograms()
         {
+            var userId = GetCurrentUserId();
             var programs = await _workoutProgramService.GetUserProgramsAsync(userId);
             return Ok(ApiResponse<List<WorkoutProgramDto>>.SuccessResponse(programs));
         }
@@ -46,7 +47,8 @@ namespace WebApi.Controllers
         [Authorize]
         public async Task<IActionResult> AddWorkoutProgram([FromBody] CreateWorkoutProgramDto createDto)
         {
-            var result = await _workoutProgramService.AddWorkoutProgramAsync(createDto);
+            var userId = GetCurrentUserId();
+            var result = await _workoutProgramService.AddWorkoutProgramAsync(createDto, userId);
             return CreatedAtAction(nameof(GetWorkoutProgramDetail), new { id = result.Id },
                 ApiResponse<WorkoutProgramDto>.SuccessResponse(result, "Program başarıyla oluşturuldu."));
         }
@@ -55,7 +57,8 @@ namespace WebApi.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateWorkoutProgram([FromBody] UpdateWorkoutProgramDto updateDto)
         {
-            await _workoutProgramService.UpdateWorkoutProgramAsync(updateDto);
+            var userId = GetCurrentUserId();
+            await _workoutProgramService.UpdateWorkoutProgramAsync(updateDto, userId);
             return Ok(ApiResponse<object>.SuccessMessages("Program başarıyla güncellendi."));
         }
 
@@ -63,22 +66,25 @@ namespace WebApi.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteWorkoutProgram(int id)
         {
-            await _workoutProgramService.DeleteWorkoutProgramAsync(id);
+            var userId = GetCurrentUserId();
+            await _workoutProgramService.DeleteWorkoutProgramAsync(id, userId);
             return Ok(ApiResponse<object>.SuccessMessages("Program başarıyla silindi."));
         }
 
         [HttpPost("clone/{programId}")]
         [Authorize]
-        public async Task<IActionResult> CloneSystemProgramToUser(int programId, [FromQuery] int userId)
+        public async Task<IActionResult> CloneSystemProgramToUser(int programId)
         {
+            var userId = GetCurrentUserId();
             var newProgramId = await _workoutProgramService.CloneSystemProgramToUserAsync(programId, userId);
             return Ok(ApiResponse<object>.SuccessResponse(new { NewProgramId = newProgramId }, "Program başarıyla kopyalandı."));
         }
 
         [HttpPost("activate")]
         [Authorize]
-        public async Task<IActionResult> ActivateProgram([FromQuery] int programId, [FromQuery] int userId)
+        public async Task<IActionResult> ActivateProgram([FromQuery] int programId)
         {
+            var userId = GetCurrentUserId();
             await _workoutProgramService.ActivateProgramAsync(programId, userId);
             return Ok(ApiResponse<object>.SuccessMessages("Program başarıyla aktifleştirildi."));
         }
