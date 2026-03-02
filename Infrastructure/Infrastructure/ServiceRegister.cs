@@ -19,6 +19,7 @@ namespace Infrastructure
         {
             services.AddScoped<IWorkoutProgramService, WorkoutProgramService>();
             services.AddScoped<IExerciseService, ExerciseService>();
+            services.AddScoped<IWorkoutLogService, WorkoutLogService>();
             services.AddScoped<IPostService, PostService>();
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IStorageService, AwsS3StorageService>();
